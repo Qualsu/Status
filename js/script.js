@@ -1,4 +1,7 @@
 let allServersStatus = 'ok';
+let downServers = 0;
+let warningServers = 0;
+let offlineServers = 0;
 
 function updateLastUpdateTime() {
     const timeElement = document.querySelector('.time');
@@ -20,9 +23,9 @@ function updateLastUpdateTime() {
     }
 }
 
-async function serverStatus(url, statusImageId, statusTextId, progressId) {
+async function serverStatus(url, id) {
     const startTime = Date.now();
-    const progressElement = document.querySelector(progressId);
+    const progressElement = document.querySelector(`${id} .progress`);
 
     try {
         const response = await fetch(url, {
@@ -31,33 +34,36 @@ async function serverStatus(url, statusImageId, statusTextId, progressId) {
         });
         const timeTaken = Date.now() - startTime;
 
-        const statusImage = document.querySelector(statusImageId);
-        const statusText = document.querySelector(statusTextId);
+        const statusImage = document.querySelector(`${id} img`);
+        const statusText = document.querySelector(`${id} p`);
 
         console.log(`${url}: ${response.status}: ${timeTaken}`)
         
-        if (timeTaken < 1000 && response.status === 200) {
+        if (timeTaken < 4999 && response.status === 200) {
             allServersStatus = 'ok';
             statusImage.src = 'img/ok.svg';
             statusText.textContent = 'online';
             progressElement.style.backgroundColor = '#22c55e';
         } else if (response.status === 404 || response.status === 500) {
             allServersStatus = 'down';
+            downServers++
             statusImage.src = 'img/down.svg';
             statusText.textContent = 'down';
             progressElement.style.backgroundColor = '#FF6D6D';
-        } else if (timeTaken >= 1000) {
+        } else if (timeTaken >= 4999) {
+            warningServers++
             allServersStatus = 'warning';
             statusImage.src = 'img/warning.svg';
             statusText.textContent = 'warning';
             progressElement.style.backgroundColor = '#FFF36D';
         }
     } catch (error) {
-        allServersStatus = 'error';
+        allServersStatus = 'offline';
+        offlineServers++
         console.log(`Error fetching ${url}:`, error)
-        document.querySelector(statusImageId).src = 'img/error.svg';
-        document.querySelector(statusTextId).textContent = 'error';
-        progressElement.style.backgroundColor = '#FF6D6D';
+        document.querySelector(`${id} img`).src = 'img/offline.svg';
+        document.querySelector(`${id} p`).textContent = 'offline';
+        progressElement.style.backgroundColor = '#52525b';
     }
 
     updateOverallStatus();
@@ -74,16 +80,16 @@ function updateOverallStatus() {
         favicon.href = 'img/ok.svg';
     } else if (allServersStatus === 'warning') {
         statusImage.src = 'img/warning.svg';
-        statusText.textContent = 'Delay warnings';
+        statusText.textContent = `${warningServers} server warn of delay`;
         favicon.href = 'img/warning.svg';
     } else if (allServersStatus === 'down') {
         statusImage.src = 'img/down.svg';
-        statusText.textContent = 'Server is down';
+        statusText.textContent = `${downServers} Server is down`;
         favicon.href = 'img/dowm.svg';
-    } else if (allServersStatus === 'error') {
-        statusImage.src = 'img/error.svg';
-        statusText.textContent = 'Error getting status';
-        favicon.href = 'img/error.svg';
+    } else if (allServersStatus === 'offline') {
+        statusImage.src = 'img/offline.svg';
+        statusText.textContent = `${offlineServers} Server is offline`;
+        favicon.href = 'img/offline.svg';
     }
 }
 
@@ -95,10 +101,10 @@ async function main() {
     contentElement.style.display = 'none';
 
     await Promise.all([
-        serverStatus('https://qual.su', '.website img', '.website p', '.website .progress'),
-        serverStatus('https://notable-anemone-34.accounts.dev/sign-in', '.qsuid img', '.qsuid p', '.qsuid .progress'),
-        serverStatus('https://keny.cloud', '.kenycloud img', '.kenycloud p', '.kenycloud .progress'),
-        serverStatus('https://sandstone.fun', '.sandstone img', '.sandstone p', '.sandstone .progress')
+        serverStatus('https://qual.su', '.website'),
+        serverStatus('https://notable-anemone-34.accounts.dev/sign-in', '.qsuid'),
+        serverStatus('https://keny.cloud', '.kenycloud'),
+        serverStatus('https://sandstone.fun', '.sandstone')
     ]);
 
     loadingElement.style.display = 'none';
