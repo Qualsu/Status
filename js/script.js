@@ -104,7 +104,7 @@ async function main() {
         serverStatus('https://qual.su', '.website'),
         serverStatus('https://notable-anemone-34.accounts.dev/sign-in', '.qsuid'),
         serverStatus('https://keny.cloud', '.kenycloud'),
-        serverStatus('https://sandstone.fun', '.sandstone')
+        serverStatus('https://notter.tech', '.notter')
     ]);
 
     loadingElement.style.display = 'none';
