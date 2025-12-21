@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+
+@font-face {
+  font-family: 'MultiroundPro';
+  src: url('/MultiroundPro.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+* {
+    font-family: 'MultiroundPro', sans-serif;
+}
+
+body {
+    background: #191118;
+}
