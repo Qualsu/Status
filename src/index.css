@@ -11,9 +11,10 @@
 
 
 * {
-    font-family: 'MultiroundPro', sans-serif;
+  font-family: 'MultiroundPro', sans-serif;
+  overflow-x: hidden;
 }
 
 body {
-    background: #191118;
+  background: #191118;
 }
