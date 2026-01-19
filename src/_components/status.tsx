@@ -13,7 +13,7 @@ export default function WebsiteStatus() {
   const [sites, setSites] = useState<SiteStatus[]>([
     { name: 'Website', url: 'https://qual.su', status: 'offline', responseTime: '' },
     { name: 'Qual ID', url: 'https://id.qual.su', status: 'offline', responseTime: '' },
-    { name: 'Notter', url: 'https://notter.tech', status: 'offline', responseTime: '' },
+    { name: 'Notter', url: 'https://notter.su', status: 'offline', responseTime: '' },
     { name: 'API', url: import.meta.env.VITE_API_URL, status: 'offline', responseTime: '' },
   ]);
   const [hasError, setHasError] = useState(false);
@@ -146,3 +146,4 @@ export default function WebsiteStatus() {
     </div>
   );
 }
+
