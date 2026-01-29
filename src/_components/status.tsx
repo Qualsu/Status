@@ -14,6 +14,7 @@ export default function WebsiteStatus() {
     { name: 'Website', url: 'https://qual.su', status: 'offline', responseTime: '' },
     { name: 'Qual ID', url: 'https://id.qual.su', status: 'offline', responseTime: '' },
     { name: 'Notter', url: 'https://notter.su', status: 'offline', responseTime: '' },
+    { name: 'Shrtl', url: 'https://shrtl.ru', status: 'offline', responseTime: '' },
     { name: 'API', url: import.meta.env.VITE_API_URL, status: 'offline', responseTime: '' },
   ]);
   const [hasError, setHasError] = useState(false);
@@ -64,7 +65,7 @@ export default function WebsiteStatus() {
               <div className="w-32 h-6 bg-gray-300 rounded animate-pulse" />
             </div>
             <div className="space-y-4">
-              {Array.from({ length: 4 }).map((_, index) => (
+              {Array.from({ length: sites.length }).map((_, index) => (
                 <div key={index} className="flex items-center justify-between space-x-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-4 h-4 bg-gray-300 rounded-full animate-pulse" />
