@@ -1,51 +1,63 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { pingWebsite } from '../api/status';
+import {
+  INITIAL_SERVICE_STATUSES,
+  INITIAL_STATUS_SERVICE,
+  SERVICE_STATUSES,
+  STATUS_SERVICE,
+} from '../config/const/api.const';
+import type { ServiceConfig, ServiceEndpointStatus, ServiceStatus, Statuses } from '../config/types/components.types';
 
-interface SiteStatus {
-  name: string;
-  url: string;
-  status: 'online' | 'offline' | 'error';
-  responseTime: string;
+function getOverallStatus(statuses: Statuses[]): Statuses {
+  if (statuses.includes('error')) {
+    return 'error';
+  }
+
+  if (statuses.includes('offline')) {
+    return 'offline';
+  }
+
+  return 'online';
+}
+
+async function fetchServiceStatus(service: ServiceConfig): Promise<ServiceStatus> {
+  const endpointStatuses: ServiceEndpointStatus[] = await Promise.all(
+    service.endpoints.map(async (endpoint) => {
+      const result = await pingWebsite(endpoint.url);
+      return { ...endpoint, ...result };
+    })
+  );
+
+  return {
+    key: service.key,
+    label: service.label,
+    status: getOverallStatus(endpointStatuses.map((endpoint) => endpoint.status)),
+    endpoints: endpointStatuses,
+  };
 }
 
 export default function WebsiteStatus() {
-  const [sites, setSites] = useState<SiteStatus[]>([
-    { name: 'Website', url: 'https://qual.su', status: 'offline', responseTime: '' },
-    { name: 'Qual ID', url: 'https://id.qual.su', status: 'offline', responseTime: '' },
-    { name: 'Notter', url: 'https://notter.su', status: 'offline', responseTime: '' },
-    { name: 'Shrtl', url: 'https://shrtl.ru', status: 'offline', responseTime: '' },
-    { name: 'API', url: import.meta.env.VITE_API_URL, status: 'offline', responseTime: '' },
-  ]);
+  const [statusService, setStatusService] = useState<ServiceStatus>(INITIAL_STATUS_SERVICE);
+  const [services, setServices] = useState<ServiceStatus[]>(INITIAL_SERVICE_STATUSES);
   const [hasError, setHasError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [expandedServiceKey, setExpandedServiceKey] = useState<string | null>(null);
+  const downCount = [statusService, ...services].filter((service) => service.status !== 'online').length;
 
   useEffect(() => {
-    const checkStatus = async (url: string): Promise<{ status: 'online' | 'offline' | 'error'; responseTime: string }> => {
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/ping`, { url: url });
-
-        if (response.status === 200) {
-          return { status: 'online', responseTime: response.data.response_time };
-        } else {
-          return { status: 'offline', responseTime: '' };
-        }
-      } catch {
-        return { status: 'error', responseTime: '' };
-      }
-    };
-
     const fetchStatuses = async () => {
-      const statuses = await Promise.all(
-        sites.map(async (site) => {
-          const status = await checkStatus(site.url);
-          return { ...site, ...status };
-        })
-      );
+      const [statusChecker, regularServices] = await Promise.all([
+        fetchServiceStatus(STATUS_SERVICE),
+        Promise.all(SERVICE_STATUSES.map(fetchServiceStatus)),
+      ]);
 
-      setSites(statuses);
-      setHasError(statuses.some((site) => site.status === 'offline' || site.status === 'error'));
+      setStatusService(statusChecker);
+      setServices(regularServices);
+      setHasError(
+        statusChecker.status !== 'online' ||
+        regularServices.some((service) => service.status !== 'online')
+      );
 
       const currentTime = new Date().toLocaleString();
       setLastUpdated(currentTime);
@@ -56,95 +68,110 @@ export default function WebsiteStatus() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen text-white">
-      <div className="p-6 w-full max-w-xl space-y-6">
+    <div className="flex justify-center items-center min-h-screen text-white px-4 pb-16">
+      <div className="w-full max-w-md">
         {loading ? (
-          <div className="space-y-6 opacity-30">
-            <div className="flex justify-center items-center space-x-2">
-              <div className="w-12 h-12 bg-gray-300 rounded-full animate-pulse" />
-              <div className="w-32 h-6 bg-gray-300 rounded animate-pulse" />
+          <div className="space-y-8 animate-pulse">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-36 h-6 bg-white/8 rounded-full" />
             </div>
-            <div className="space-y-4">
-              {Array.from({ length: sites.length }).map((_, index) => (
-                <div key={index} className="flex items-center justify-between space-x-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gray-300 rounded-full animate-pulse" />
-                    <div className="w-32 h-6 bg-gray-300 rounded animate-pulse" />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-24 h-2 bg-gray-300 rounded-full animate-pulse" />
-                    <div className="w-16 h-6 bg-gray-300 rounded animate-pulse" />
-                  </div>
-                </div>
+            <div className="space-y-2">
+              {Array.from({ length: services.length + 1 }).map((_, index) => (
+                <div key={index} className="h-13 bg-white/4 rounded-xl" />
               ))}
             </div>
             <div className="flex justify-center">
-              <div className="w-32 h-4 bg-gray-300 rounded animate-pulse" />
+              <div className="w-28 h-3 bg-white/5 rounded" />
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="flex justify-center items-center space-x-2">
-              {hasError ? (
-                <XCircle className="text-red-500" size={48} />
-              ) : (
-                <CheckCircle className="text-green-500" size={48} />
-              )}
-              <span className="text-xl font-semibold">
-                {hasError ? `${sites.filter((site) => site.status !== 'online').length} site(s) are down` : 'All sites are up'}
+          <div className="space-y-8">
+            <div className="flex justify-center">
+              <span className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs ${
+                hasError ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                  hasError ? 'bg-red-400' : 'bg-green-400'
+                }`} />
+                {hasError ? `${downCount} service${downCount > 1 ? 's' : ''} offline` : 'All systems operational'}
               </span>
             </div>
 
-            <div className="space-y-4">
-              {sites.map((site, index) => (
-                <div key={index} className="flex items-center justify-between space-x-4">
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`w-4 h-4 rounded-full animate-pulse ${
-                        site.status === 'online'
-                          ? 'bg-green-500'
-                          : site.status === 'offline'
-                          ? 'bg-gray-500'
-                          : 'bg-red-500'
-                      }`}
-                    />
-                    <a className="flex-1 text-sm hover:underline hover:text-current/80" href={site.url}>
-                      {site.name}
-                    </a>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="relative w-24 h-2 bg-gray-300 rounded-full">
-                      <div
-                        className={`absolute top-0 left-0 h-full rounded-full ${
-                          site.status === 'online'
-                            ? 'bg-green-500'
-                            : site.status === 'offline'
-                            ? 'bg-gray-500'
-                            : 'bg-red-500'
-                        }`}
-                        style={{
-                          width: site.status === 'online' ? '100%' : site.status === 'offline' ? '0%' : '50%',
-                        }}
-                      />
+            <div className="space-y-1">
+              {[statusService, ...services].map((service) => (
+                <div key={service.key}>
+                  <button
+                    type="button"
+                    className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-white/4 transition-colors duration-150 text-left"
+                    onClick={() => setExpandedServiceKey((prev) => (prev === service.key ? null : service.key))}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${
+                        service.status === 'online' ? 'bg-green-400' :
+                        service.status === 'offline' ? 'bg-gray-500' : 'bg-red-400'
+                      }`} />
+                      <span className="text-sm text-white/85">{service.label}</span>
                     </div>
-                    <span className="text-sm">
-                      {site.status === 'online'
-                        ? `${site.responseTime} ms`
-                        : site.status === 'offline'
-                        ? 'Offline'
-                        : 'Error'}
-                    </span>
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        service.status === 'online' ? 'bg-green-500/10 text-green-400' :
+                        service.status === 'offline' ? 'bg-gray-500/10 text-gray-400' :
+                        'bg-red-500/10 text-red-400'
+                      }`}>
+                        {service.status === 'online' ? 'Operational' : service.status === 'offline' ? 'Offline' : 'Degraded'}
+                      </span>
+                      <svg
+                        className={`w-3.5 h-3.5 text-white/20 transition-transform duration-200 ${
+                          expandedServiceKey === service.key ? 'rotate-180' : ''
+                        }`}
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                      >
+                        <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  {expandedServiceKey === service.key && (
+                    <div className="pb-2 space-y-0.5">
+                      {service.endpoints.map((endpoint) => (
+                        <div key={`${service.key}-${endpoint.type}`} className="flex items-center justify-between px-4 py-2 pl-11">
+                          <a
+                            className={`text-xs text-white/40 ${
+                              endpoint.type === 'Site' ? 'hover:text-white/70 cursor-pointer transition-colors duration-150' : 'cursor-default'
+                            }`}
+                            href={endpoint.type === 'Site' ? endpoint.url : undefined}
+                            target={endpoint.type === 'Site' ? '_blank' : undefined}
+                            rel="noreferrer"
+                          >
+                            {endpoint.type}
+                          </a>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-white/30">
+                              {endpoint.status === 'online'
+                                ? `${endpoint.responseTime} ms`
+                                : endpoint.status === 'offline'
+                                ? 'Offline'
+                                : 'Error'}
+                            </span>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              endpoint.status === 'online' ? 'bg-green-400' :
+                              endpoint.status === 'offline' ? 'bg-gray-500' : 'bg-red-400'
+                            }`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-            <div className="text-center text-sm text-gray-400">
-              Last updated: {lastUpdated}
-            </div>
+
+            <p className="text-center text-xs text-white/50">Updated {lastUpdated}</p>
           </div>
         )}
       </div>
     </div>
   );
 }
+
 
