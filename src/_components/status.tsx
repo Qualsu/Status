@@ -90,7 +90,6 @@ export default function WebsiteStatus() {
           <div className="space-y-8">
             <div className="flex flex-col items-center gap-3 pt-1">
               <h1 className="text-center text-3xl tracking-tight sm:text-4xl">Service Status</h1>
-              <p className="text-center text-sm text-white/60">Realtime uptime for Qualsu products and public APIs</p>
               <span className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs ${
                 hasError ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'
               }`}>
