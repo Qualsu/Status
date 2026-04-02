@@ -68,25 +68,29 @@ export default function WebsiteStatus() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen text-white px-4 pb-16">
-      <div className="w-full max-w-md">
+    <main className="px-3 pb-8 pt-24 sm:px-6 md:px-8 lg:px-10">
+      <section className="section-shell mx-auto w-full max-w-270 rounded-[1.75rem]">
+        <div className="relative z-10 mx-auto w-full max-w-3xl">
         {loading ? (
           <div className="space-y-8 animate-pulse">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-36 h-6 bg-white/8 rounded-full" />
+            <div className="flex flex-col items-center gap-3 pt-2">
+              <div className="h-6 w-44 rounded-full bg-white/8" />
+              <div className="h-4 w-64 rounded-full bg-white/5" />
             </div>
             <div className="space-y-2">
               {Array.from({ length: services.length + 1 }).map((_, index) => (
-                <div key={index} className="h-13 bg-white/4 rounded-xl" />
+                <div key={index} className="h-14 rounded-xl border border-white/5 bg-white/4" />
               ))}
             </div>
             <div className="flex justify-center">
-              <div className="w-28 h-3 bg-white/5 rounded" />
+              <div className="h-3 w-44 rounded bg-white/5" />
             </div>
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-3 pt-1">
+              <h1 className="text-center text-3xl tracking-tight sm:text-4xl">Service Status</h1>
+              <p className="text-center text-sm text-white/60">Realtime uptime for Qualsu products and public APIs</p>
               <span className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs ${
                 hasError ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'
               }`}>
@@ -102,7 +106,7 @@ export default function WebsiteStatus() {
                 <div key={service.key}>
                   <button
                     type="button"
-                    className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-white/4 transition-colors duration-150 text-left"
+                    className="surface-panel w-full text-left flex items-center justify-between rounded-xl px-4 py-3.5 transition-colors duration-150 hover:bg-white/8"
                     onClick={() => setExpandedServiceKey((prev) => (prev === service.key ? null : service.key))}
                   >
                     <div className="flex items-center gap-3">
@@ -132,12 +136,15 @@ export default function WebsiteStatus() {
                   </button>
 
                   {expandedServiceKey === service.key && (
-                    <div className="pb-2 space-y-0.5">
+                    <div className="mx-1 mt-1 space-y-1 rounded-xl border border-white/10 bg-white/7 p-2 pb-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                       {service.endpoints.map((endpoint) => (
-                        <div key={`${service.key}-${endpoint.type}`} className="flex items-center justify-between px-4 py-2 pl-11">
+                        <div
+                          key={`${service.key}-${endpoint.type}`}
+                          className="flex items-center justify-between rounded-xl border border-white/15 bg-white/10 px-4 py-2 pl-11"
+                        >
                           <a
-                            className={`text-xs text-white/40 ${
-                              endpoint.type === 'Site' ? 'hover:text-white/70 cursor-pointer transition-colors duration-150' : 'cursor-default'
+                            className={`text-xs text-white/70 ${
+                              endpoint.type === 'Site' ? 'cursor-pointer transition-colors duration-150 hover:text-white' : 'cursor-default'
                             }`}
                             href={endpoint.type === 'Site' ? endpoint.url : undefined}
                             target={endpoint.type === 'Site' ? '_blank' : undefined}
@@ -146,7 +153,7 @@ export default function WebsiteStatus() {
                             {endpoint.type}
                           </a>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-white/30">
+                            <span className="text-xs text-white/65">
                               {endpoint.status === 'online'
                                 ? `${endpoint.responseTime} ms`
                                 : endpoint.status === 'offline'
@@ -169,8 +176,9 @@ export default function WebsiteStatus() {
             <p className="text-center text-xs text-white/50">Updated {lastUpdated}</p>
           </div>
         )}
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
