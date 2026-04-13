@@ -37,6 +37,11 @@ export const SERVICE_STATUSES: ServiceConfig[] = [
     endpoints: getServiceEndpoints(links.QSU_ID),
   },
   {
+    key: 'QUALCLOUD',
+    label: links.QUALCLOUD.LABEL,
+    endpoints: getServiceEndpoints(links.QUALCLOUD),
+  },
+  {
     key: 'NOTTER',
     label: links.NOTTER.LABEL,
     endpoints: getServiceEndpoints(links.NOTTER),

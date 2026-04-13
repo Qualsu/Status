@@ -17,6 +17,10 @@ export const links = {
         SITE: "https://shrtl.ru",
         API: "https://db.api.qual.su:8005"
     },
+    QUALCLOUD:{
+        LABEL: "QualCloud",
+        SITE: "https://cloud.qual.su",
+    },
     STATUS: {
         LABEL: "Status Checker",
         API: "https://db.api.qual.su:8003"

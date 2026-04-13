@@ -1,40 +1,12 @@
 import { useState, useEffect } from 'react';
-import { pingWebsite } from '../api/status';
 import {
   INITIAL_SERVICE_STATUSES,
   INITIAL_STATUS_SERVICE,
   SERVICE_STATUSES,
   STATUS_SERVICE,
 } from '../config/const/api.const';
-import type { ServiceConfig, ServiceEndpointStatus, ServiceStatus, Statuses } from '../config/types/components.types';
-
-function getOverallStatus(statuses: Statuses[]): Statuses {
-  if (statuses.includes('error')) {
-    return 'error';
-  }
-
-  if (statuses.includes('offline')) {
-    return 'offline';
-  }
-
-  return 'online';
-}
-
-async function fetchServiceStatus(service: ServiceConfig): Promise<ServiceStatus> {
-  const endpointStatuses: ServiceEndpointStatus[] = await Promise.all(
-    service.endpoints.map(async (endpoint) => {
-      const result = await pingWebsite(endpoint.url);
-      return { ...endpoint, ...result };
-    })
-  );
-
-  return {
-    key: service.key,
-    label: service.label,
-    status: getOverallStatus(endpointStatuses.map((endpoint) => endpoint.status)),
-    endpoints: endpointStatuses,
-  };
-}
+import type { ServiceStatus} from '../config/types/components.types';
+import { fetchServiceStatus } from '../api/status';
 
 export default function WebsiteStatus() {
   const [statusService, setStatusService] = useState<ServiceStatus>(INITIAL_STATUS_SERVICE);
