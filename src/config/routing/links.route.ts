@@ -10,7 +10,8 @@ export const links = {
     NOTTER: {
         LABEL: "Notter",
         SITE: "https://notter.su",
-        API: "https://db.api.qual.su:8000"
+        API: "https://db.api.qual.su:8000",
+        S3: "https://db.api.qual.su:8008",
     },
     SHRTL:{
         LABEL: "Shrtl",
@@ -20,6 +21,7 @@ export const links = {
     QUALCLOUD:{
         LABEL: "QualCloud",
         SITE: "https://cloud.qual.su",
+        API: "https://db.api.qual.su:8006",
     },
     STATUS: {
         LABEL: "Status Checker",

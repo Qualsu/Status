@@ -8,12 +8,16 @@ export const api = axios.create({
   baseURL: API_URL,
 });
 
-const getServiceEndpoints = (service: { SITE: string; API?: string; CLERK?: string }): ServiceEndpoint[] => {
+const getServiceEndpoints = (service: { SITE: string; API?: string; CLERK?: string; S3?: string }): ServiceEndpoint[] => {
   const endpoints: ServiceEndpoint[] = [{ type: 'Site', url: service.SITE }];
   const apiUrl = service.API ?? service.CLERK;
 
   if (apiUrl) {
     endpoints.push({ type: 'API', url: apiUrl });
+  }
+
+  if (service.S3) {
+    endpoints.push({ type: 'S3', url: service.S3 });
   }
 
   return endpoints;
