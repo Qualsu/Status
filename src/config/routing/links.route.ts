@@ -23,6 +23,11 @@ export const links = {
         SITE: "https://cloud.qual.su",
         API: "https://db.api.qual.su:8006",
     },
+    QUALAI: {
+        LABEL: "QualAI",
+        SITE: "https://ai.qual.su",
+        API: "https://kenyhost.duckdns.org:8010"
+    },
     STATUS: {
         LABEL: "Status Checker",
         API: "https://db.api.qual.su:8003"
