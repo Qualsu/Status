@@ -1,7 +1,7 @@
 export type Statuses = 'online' | 'offline' | 'error';
 
 export interface ServiceEndpoint {
-  type: 'Site' | 'API';
+  type: 'Site' | 'API' | 'S3';
   url: string;
 }
 
