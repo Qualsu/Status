@@ -37,8 +37,8 @@ export const SERVICE_STATUSES: ServiceConfig[] = [
   },
   {
     key: 'QSU_ID',
-    label: links.QSU_ID.LABEL,
-    endpoints: getServiceEndpoints(links.QSU_ID),
+    label: links.QUALID.LABEL,
+    endpoints: getServiceEndpoints(links.QUALID),
   },
   {
     key: 'QUALCLOUD',
@@ -54,6 +54,11 @@ export const SERVICE_STATUSES: ServiceConfig[] = [
     key: 'NOTTER',
     label: links.NOTTER.LABEL,
     endpoints: getServiceEndpoints(links.NOTTER),
+  },
+  {
+    key: 'NOTTER TODO',
+    label: links.NOTTERTODO.LABEL,
+    endpoints: getServiceEndpoints(links.NOTTERTODO),
   },
   {
     key: 'SHRTL',

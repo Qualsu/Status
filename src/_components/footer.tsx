@@ -17,7 +17,7 @@ export default function Footer() {
                         <div className="flex items-center gap-5">
                             <a href={links.QUALSU.SITE} target="_blank" rel="noreferrer" className="text-xs text-white/50 transition-colors duration-200 hover:text-white/80">Site</a>
                             <a href={links.FEEDBACK.SITE} target="_blank" rel="noreferrer" className="text-xs text-white/50 transition-colors duration-200 hover:text-white/80">Feedback</a>
-                            <a href={links.QSU_ID.SITE} target="_blank" rel="noreferrer" className="text-xs text-white/50 transition-colors duration-200 hover:text-white/80">Qual ID</a>
+                            <a href={links.QUALID.SITE} target="_blank" rel="noreferrer" className="text-xs text-white/50 transition-colors duration-200 hover:text-white/80">Qual ID</a>
                         </div>
                     </div>
                     <hr className="my-5 border-white/10" />
