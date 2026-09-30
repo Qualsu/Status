@@ -10,8 +10,8 @@ export const links = {
     NOTTER: {
         LABEL: "Notter",
         SITE: "https://notter.su",
-        API: "https://db.api.qual.su:8000",
-        S3: "https://db.api.qual.su:8008",
+        API: "https://api.qualsu.ru:8000",
+        S3: "https://api.qualsu.ru:8008",
     },
     NOTTERTODO: {
         LABEL: "Notter ToDo",
@@ -20,21 +20,21 @@ export const links = {
     SHRTL:{
         LABEL: "Shrtl://",
         SITE: "https://shrtl.ru",
-        API: "https://db.api.qual.su:8005"
+        API: "https://api.qualsu.ru:8005"
     },
     QUALCLOUD:{
         LABEL: "QualCloud",
         SITE: "https://cloud.qual.su",
-        API: "https://db.api.qual.su:8006",
+        API: "https://api.qualsu.ru:8006",
     },
     QUALAI: {
         LABEL: "QualAI",
         SITE: "https://ai.qual.su",
-        API: "https://db.api.qual.su:8010",
+        API: "https://api.qualsu.ru:8010",
     },
     STATUS: {
         LABEL: "Status Checker",
-        API: "https://db.api.qual.su:8003",
+        API: "https://api.qualsu.ru:8003",
     },
     FEEDBACK: {
         LABEL: "Feedback",
